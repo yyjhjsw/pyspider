@@ -1,5 +1,3 @@
-from email import header
-from signal import sigwait
 import aiofiles
 import aiohttp
 import asyncio
@@ -15,16 +13,26 @@ async def get_url(session,url):
             res = await resp.text()
             return res
 
+
 async def htmlParsh(html):
     htmlPs = etree.HTML(html)
-    print(htmlPs)
+    chaTitles = htmlPs.xpath('//img[@class="item-img"]/@alt')
+    chaUrls = htmlPs.xpath('//a[@class="item-link"]/@href')
+    for i in chaUrls:
+        print(i)
+    nextPageUrl = htmlPs.xpath('//li[@class="page-item"]/a[@rel="next"]/@href')
+    if not nextPageUrl:
+        print("所有页面索引完毕！")
+        return      
+    else:
+        await main(nextPageUrl[0])
 
 
-async def main():
-    offset = f'https://www.f4mn.com/search.html?s={input("请输入搜索关键字：")}'
+
+async def main(offset):
     async with aiohttp.ClientSession() as session:
         html = await get_url(session,offset)
         await htmlParsh(html)
 
-
-asyncio.run(main())
+offset=f'https://www.f4mn.com/search.html?s=小热巴'
+asyncio.run(main(offset))
