@@ -2,11 +2,10 @@ import aiofiles
 import aiohttp
 import asyncio
 from lxml import etree
-import uvloop
-import re
+import uvloop    # win下忽略，不要导入此模块
 import os
 
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())    # win下注释掉此行
 headers={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0"}
 
 async def get_url(session,url):
@@ -19,7 +18,6 @@ async def get_url(session,url):
 async def htmlParsh(sem,session,html):
     async with sem:
         htmlPs = etree.HTML(html)
-        # chaTitles = htmlPs.xpath('//img[@class="item-img"]/@alt')
         chaUrls = htmlPs.xpath('//a[@class="item-link"]/@href')
         tasks = []
         for url in chaUrls:
